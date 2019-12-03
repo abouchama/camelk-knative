@@ -21,7 +21,7 @@ export CAMELK=`pwd`
 watch -n1 'oc get csv -n knative-serving -ocustom-columns-file=$CAMELK/install/csv-columns.txt'
 ```
 
-## Install Serverless
+## Install OpenShift Serverless / ServiceMesh (Knative-serving, istio)
 Subscribe to Serverless via OperatorHub
 
 ```
@@ -94,7 +94,7 @@ oc get smmr --all-namespaces
 NAMESPACE                 NAME      MEMBERS
 knative-serving-ingress   default   [knative-serving camelkknativetutorial]
 ```
-##. Install CamelK
+## Install CamelK
 ```
 oc project camelkknativetutorial
 kamel install
