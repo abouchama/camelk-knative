@@ -12,6 +12,8 @@ This tutorial was developed and tested with:
 Install catalog sources
 
 ```
+https://github.com/abouchama/camelk-knative
+cd camelk-knative
 export CAMELK=`pwd`
 oc apply -f "$CAMELK/install/redhat-operators-csc.yaml"
 ```
@@ -33,7 +35,6 @@ redhat-operators-packages      Succeeded   The object has been successfully reco
 Subscribe to Serverless
 
 ```
-export CAMELK=`pwd`
 oc apply -f "$CAMELK/install/knative-serving/subscription.yaml"
 ```
 A successful serverless subscription install should show the output in WATCH_WINDOW like:
@@ -67,7 +68,6 @@ servicemeshoperator.v1.0.2                  1.0.2                Succeeded
 ```
 we can create a KnativeServing custom resource
 ```
-export CAMELK=`pwd`
 oc apply -f "$CAMELK/install/knative-serving/ks-cr.yaml"
 ```
 A successful serverless install will show the following pods in `knative-serving-ingress` & `knative-serving` namespaces:
