@@ -1,33 +1,42 @@
-# Prerequisties
+# Camel K / Knative Tutorial
+This tutorial shows how to use different parts of Camel K / Knative.
+
+## Installation
+
+This tutorial was developed and tested with:
+
+- OpenShift : 4.2.7
+- Openshift Service Mesh (Istio) : 1.0.2
+- OpenShift Serverless (Knative-serving) : 1.2.0 (Tech Preview)
+
+Install catalog sources
 
 ```
 export CAMELK=`pwd`
 oc apply -f "$CAMELK/install/redhat-operators-csc.yaml"
 ```
 
+It will take few minutes for the operators to be installed and reconciled, check the status using the command:
+
 ```
 oc -n openshift-marketplace get csc
 ```
 
-```
-export CAMELK=`pwd`
-watch -n1 'oc get csv -n openshift-operators -ocustom-columns-file=$CAMELK/install/csv-columns.txt'
-```
+A successful reconciliation should show an output like:
 
-
-wait until server-less-operator will be installed
 ```
-export CAMELK=`pwd`
-watch -n1 'oc get csv -n knative-serving -ocustom-columns-file=$CAMELK/install/csv-columns.txt'
+NAME                           STATUS      MESSAGE                                       AGE
+redhat-operators-packages      Succeeded   The object has been successfully reconciled   2s
 ```
 
 ## Install OpenShift Serverless / ServiceMesh (Knative-serving, istio)
-Subscribe to Serverless via OperatorHub
+Subscribe to Serverless
 
 ```
 export CAMELK=`pwd`
 oc apply -f "$CAMELK/install/knative-serving/subscription.yaml"
 ```
+A successful serverless subscription install should show the output in WATCH_WINDOW like:
 
 ```
 oc get csv -n openshift-operators
@@ -38,12 +47,13 @@ kiali-operator.v1.0.7                       1.0.7                Succeeded
 serverless-operator.v1.2.0                  1.2.0                Succeeded
 servicemeshoperator.v1.0.2                  1.0.2                Succeeded
 ```
-
+Create projects:
 ```
 oc adm new-project knative-serving && \
 oc adm new-project knative-eventing && \
 oc adm new-project camelkknativetutorial
 ```
+The serverless operator needs to be copied to the knative-serving project before we can create a KnativeServing custom resource, you can watch the status using the command:
 
 ```
 oc get csv -n knative-serving
@@ -55,11 +65,12 @@ kiali-operator.v1.0.7                       1.0.7                Succeeded
 serverless-operator.v1.2.0                  1.2.0                Succeeded
 servicemeshoperator.v1.0.2                  1.0.2                Succeeded
 ```
-
+we can create a KnativeServing custom resource
 ```
 export CAMELK=`pwd`
 oc apply -f "$CAMELK/install/knative-serving/ks-cr.yaml"
 ```
+A successful serverless install will show the following pods in `knative-serving-ingress` & `knative-serving` namespaces:
 
 ```
 watch -n1 'oc get pods -n knative-serving-ingress'
@@ -81,6 +92,7 @@ controller-65c8dd48d6-mhfd5         1/1     Running   0          9m7s
 networking-istio-7c9fb7dd4c-8rklc   1/1     Running   0          9m7s
 webhook-95969d4fc-lx9hh             1/1     Running   0          9m6s
 ```
+Configure the member roll in SMMR in order to add your projects: 
 
 ```
 oc get smmr --all-namespaces
@@ -94,7 +106,9 @@ oc get smmr --all-namespaces
 NAMESPACE                 NAME      MEMBERS
 knative-serving-ingress   default   [knative-serving camelkknativetutorial]
 ```
+
 ## Install CamelK
+
 ```
 oc project camelkknativetutorial
 kamel install
